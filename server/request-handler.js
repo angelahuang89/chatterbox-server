@@ -19,6 +19,7 @@ var defaultCorsHeaders = {
 };
 
 var messages = [];
+var rooms = [];
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -38,6 +39,7 @@ var requestHandler = function(request, response) {
 
   // The outgoing status.
   var statusCode = 400;
+  
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -49,6 +51,16 @@ var requestHandler = function(request, response) {
   if (request.method === 'GET' && request.url === '/classes/messages') {
     statusCode = 200;
   } 
+  
+  if (request.method === 'OPTIONS') {
+    statusCode = 200;
+    response.writeHead(statusCode, headers);
+    response.end(headers['access-control-allow-methods']);
+  }
+  
+  if (request.method === 'PUT') {
+    statusCode = 202;
+  }
   
   if (request.method === 'POST' && request.url === '/classes/messages') {
     statusCode = 201;

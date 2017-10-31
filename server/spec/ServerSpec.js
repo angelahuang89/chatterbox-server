@@ -56,10 +56,11 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
-  it('Should accept posts to /classes/room', function() {
+  it('Should accept posts to /classes/messages', function() {
     var stubMsg = {
       username: 'Jono',
-      message: 'Do my bidding!'
+      message: 'Do my bidding!',
+      roomname: 'lobby'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -78,7 +79,8 @@ describe('Node Server Request Listener Function', function() {
   it('Should respond with messages that were previously posted', function() {
     var stubMsg = {
       username: 'Jono',
-      message: 'Do my bidding!'
+      message: 'Do my bidding!',
+      roomname: 'lobby'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -87,7 +89,7 @@ describe('Node Server Request Listener Function', function() {
 
     expect(res._responseCode).to.equal(201);
 
-      // Now if we request the log for that room the message we posted should be there:
+    // Now if we request the log for that room the message we posted should be there:
     req = new stubs.request('/classes/messages', 'GET');
     res = new stubs.response();
 
@@ -114,6 +116,36 @@ describe('Node Server Request Listener Function', function() {
       function() {
         expect(res._responseCode).to.equal(404);
       });
+    
   });
+  it ('Should answer "OPTIONS" with a 200 status code', function() {
+    var req = new stubs.request('/classes/messsages', 'OPTIONS');
+    var res = new stubs.response();
+    handler.requestHandler(req, res);
 
+    // Wait for response to return and then check status code
+    waitForThen(
+      function() { return res._ended; },
+      function() {
+        expect(res._responseCode).to.equal(200);
+      });
+  });  
+  it ('Should return with the allowed options to make to the server', function() {
+    req = new stubs.request('/classes/mesages', 'OPTIONS');
+    res = new stubs.response();
+    handler.requestHandler(req, res);
+    expect(res._headers['access-control-allow-methods']).to.equal('GET, POST, PUT, DELETE, OPTIONS');
+  });
+  
+  it ('Should answer "PUT" with a 202 status code', function() {
+    req = new stubs.request('/classes/mesages', 'PUT');
+    res = new stubs.response();
+    handler.requestHandler(req, res);
+    // Wait for response to return and then check status code
+    waitForThen(
+      function() { return res._ended; },
+      function() {
+        expect(res._responseCode).to.equal(202);
+      });
+  });
 });

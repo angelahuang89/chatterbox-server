@@ -8,15 +8,22 @@ class CBox {
   send (message) {
     $.ajax({
       type: 'POST',
+      contentType: 'application/json',
       url: 'http://127.0.0.1:3000/classes/messages',
-      data: message
+      data: JSON.stringify(message),
+      success: function () {
+        console.log('This is the successful "POST"', message);
+      },
+      error: function (error) {
+        console.log('Something went wrong with your "POST" ', error);
+      }
     });
   }
   fetch () {
     $.ajax({
       type: 'GET',
-      data: 'order=-createdAt',
-      url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
+      // data: 'order=-createdAt',
+      url: 'http://127.0.0.1:3000/classes/messages',
       contentType: 'application/json',
       success: function(res) {
         $('#currentRoomHeader').html('Currently Viewing: #' + app.room);
@@ -129,11 +136,3 @@ $(document).ready(function() {
     app.fetch();
   });
 });
-
-
-
-
-
-
-
-
