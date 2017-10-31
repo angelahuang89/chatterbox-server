@@ -18,6 +18,8 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var messages = [];
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -32,49 +34,32 @@ var requestHandler = function(request, response) {
   //
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
-  // console.logs in your code.
-  console.log('Serving request type ' + request.method + ' for url ' + request.url);
-  
-  
+  // console.logs in your code.  
 
   // The outgoing status.
   var statusCode = 400;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
-  let body = {};
-  let results = [];
   
-  
-  if (request.url !== '/classes/messages') {
+  if (request.url !== '/classes/messages' || request.url === undefined) {
     statusCode = 404;
   }
   
   if (request.method === 'GET' && request.url === '/classes/messages') {
-    //console.log(statusCode, 'old statusCode')
     statusCode = 200;
-    
-    //console.log(statusCode, 'new statusCode if successful');
   } 
   
   if (request.method === 'POST' && request.url === '/classes/messages') {
     statusCode = 201;
-    // let body = '';
-    // let body = [];
+    let body = [];
     request.on('data', (chunk) => {
-    // console.log('is this getting to this point or not')
-      //console.log('This is our chunk ', chunk);
-      body chunk;
-      // body += chunk;
+      body.push(chunk);
     });
     request.on('end', () => {
       body = Buffer.concat(body).toString();
-      console.log('this should be our buffer ', body);
-      //console.log(body);
-      // at this point, `body` has the entire request body stored in it as a string
+      messages.push(JSON.parse(body));
     });
-    // response.writeHead(statusCode, headers);
-    // response.end(JSON.stringify(body));
   }
   
   // Tell the client we are sending them plain text.
@@ -94,7 +79,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify(body));
+  response.end(JSON.stringify({results: messages}));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
