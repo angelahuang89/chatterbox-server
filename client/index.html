@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Slack Reactor</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+    <!-- dependencies -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      // YOU DO NOT NEED TO EDIT THIS CODE
+      if (!/(&|\?)username=/.test(window.location.search)) {
+        var newSearch = window.location.search;
+        if (newSearch !== '' & newSearch !== '?') {
+          newSearch += '&';
+        }
+        newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
+        window.location.search = newSearch;
+      }
+    </script>
+    <!-- your scripts -->
+    <script src="env/config.js"></script>
+    <script src="scripts/app.js"></script>
+  </head>
+  <body>
+    
+    <div id="main">
+      <img id="logo" src="styles/slack-reactor-logo.png">
+      <div class="jumbotron">
+        <div class="row">
+
+          <div class="rooms col-md-3 col-lg-3">
+            Channel:
+            <form id="newRoom">
+              <input id="roomForm" name="room" type="text" placeholder="e.g. lobby" name="">
+              <input type="submit" id="renderRoom" class="btn btn-default btn-sm">   
+            </form>
+
+            <div id="roomSelect">
+            </div>
+          </div>
+          <div id="chatBox" class="col-md-6 col-lg-6">
+            <div>
+              
+              <div id="chatHeader">
+                <form action="#" id="send" method="post">
+                  <input type="text" name="message" id="message"/>
+                  <input type="submit" name="submit" class="submit btn btn-default btn-sm"/>
+
+                </form>
+                <span id="currentRoomHeader"></span> 
+              </div>
+
+              
+              <div id="chats">
+              </div>
+            </div>
+          </div>
+          <div class="friends col-md-3 col-lg-3">
+            Friends List
+
+            <div id="friendsList">
+              
+            </div>
+            
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  </body>
+</html>
