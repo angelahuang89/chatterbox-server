@@ -32,11 +32,16 @@ var requestHandler = function(request, response) {
   
   if (request.method === 'GET' && request.url === '/classes/messages') {
     statusCode = 200;
-    // fs.readFile('./savedMessages.txt', 'utf8', (err, messages) => {
-    //   console.log(messages)
-    //   messages = messages + ']';
-    //   JSON.parse(messages);
-    // });
+    fs.readFile('./savedMessages.txt', 'utf8', (err, messages) => {
+      // console.log(messages.split('}'))
+      var array = messages.split('}{');
+      array[0] = array[0].slice(1);
+      array[array.length - 1] = array[array.length - 1].slice(0, -1);
+      var mapArray = array.map(message => {
+        JSON.parse('{' + message + '}');
+      });
+      console.log(mapArray)
+    });
     response.writeHead(statusCode, headers);
     response.end(JSON.stringify({results: messages}));
   } 
@@ -65,7 +70,7 @@ var requestHandler = function(request, response) {
     });
     
     checkForFile('./savedMessages.txt', () => {
-      fs.appendFile('./savedMessages.txt', (body + ','), (err, data) => {
+      fs.appendFile('./savedMessages.txt', body, (err, data) => {
         if (err) {
           throw  err;
         }
