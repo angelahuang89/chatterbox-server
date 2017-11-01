@@ -11,15 +11,35 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var defaultCorsHeaders = {
+const defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'access-control-allow-headers': 'content-type, accept',
   'access-control-max-age': 10 // Seconds.
 };
 
-var messages = [];
-var rooms = [];
+var fs = require('fs');
+
+const messages = [];
+//if saved messages exist else create it
+
+var checkForFile = function(fileName, callback) {
+  if (fs.existsSync(fileName)) {
+    callback();
+  } else {
+    fs.writeFile(fileName, '', function(err, data) {
+      callback();
+    });
+  }
+};
+
+// var writeToFile = function() {
+//   checkForFile('./savedMessage.txt', function() {
+//     fs.readFile('./savedMessages.txt', function(err, data) {
+//       // write to file
+//     });
+//   });
+// };
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -38,11 +58,10 @@ var requestHandler = function(request, response) {
   // console.logs in your code.  
 
   // The outgoing status.
-  var statusCode = 400;
+  let statusCode = 400;
   
-
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
+  let headers = defaultCorsHeaders;
   
   if (request.url !== '/classes/messages' || request.url === undefined) {
     statusCode = 404;
@@ -72,6 +91,22 @@ var requestHandler = function(request, response) {
       body = Buffer.concat(body).toString();
       messages.push(JSON.parse(body));
     });
+    
+    checkForFile('./savedMessages.txt', function() {
+      fs.appendFile('./savedMessages.txt', body, function(err, data) {
+        if (err) {
+          throw  err;
+        }
+      });
+    });
+    
+    // fs.appendFile('./savedMessages.txt', (data, err) => {
+    //   if (err) {
+    //     throw err;
+    //   }
+      
+    //   //map the data into parseable chunks in the saved messages file
+    // });
   }
   
   // Tell the client we are sending them plain text.
